@@ -24,9 +24,21 @@ public class BigCorpApplicationMeasureProperties{
     }
 
 
-    public BigCorpApplicationMeasureProperties(Environment environment) {
-        this.defaultFixed = environment.getRequiredProperty("bigcorp.measure.default-fixed",Integer.class);
+    public BigCorpApplicationMeasureProperties() {
+        /*this.defaultFixed = environment.getRequiredProperty("bigcorp.measure.default-fixed",Integer.class);
         this.defaultSimulated = environment.getRequiredProperty("bigcorp.measure.default-simulated",Integer.class);
-        this.defaultReal = environment.getRequiredProperty("bigcorp.measure.default-real",Integer.class);
+        this.defaultReal = environment.getRequiredProperty("bigcorp.measure.default-real",Integer.class);*/
+    }
+
+    public void setDefaultFixed(Integer defaultFixed) {
+        this.defaultFixed = defaultFixed;
+    }
+
+    public void setDefaultSimulated(Integer defaultSimulated) {
+        this.defaultSimulated = defaultSimulated;
+    }
+
+    public void setDefaultReal(Integer defaultReal) {
+        this.defaultReal = defaultReal;
     }
 }

@@ -5,6 +5,7 @@ public class Measure {
     private Instant instant;
     private Integer valueInWatt;
     private Captor captor;
+    private Long id;
 
     public Measure(Instant instant, Integer valueInWatt, Captor captor) {
         this.instant = instant;
@@ -12,6 +13,13 @@ public class Measure {
         this.captor = captor;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Instant getInstant() {
         return instant;

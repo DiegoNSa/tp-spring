@@ -34,16 +34,35 @@ public class BigCorpApplicationProperties{
     @NestedConfigurationProperty
     private BigCorpApplicationMeasureProperties measure;
 
-    public BigCorpApplicationProperties(Environment environment) {
-        System.out.println(environment);
-        this.name = environment.getRequiredProperty("bigcorp.name");
+    public BigCorpApplicationProperties() {
+        /*this.name = environment.getRequiredProperty("bigcorp.name");
         this.version = environment.getRequiredProperty("bigcorp.version",Integer.class);
         this.emails = (Set<String>) environment.getRequiredProperty("bigcorp.emails",Set.class);
-        this.webSiteUrl = environment.getRequiredProperty("bigcorp.webSiteUrl");
-        this.measure = new BigCorpApplicationMeasureProperties(environment);
+        this.webSiteUrl = environment.getRequiredProperty("bigcorp.webSiteUrl");*/
+        this.measure = new BigCorpApplicationMeasureProperties();
     }
 
     public BigCorpApplicationMeasureProperties getMeasure() {
         return measure;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+
+    public void setEmails(Set<String> emails) {
+        this.emails = emails;
+    }
+
+    public void setWebSiteUrl(String webSiteUrl) {
+        this.webSiteUrl = webSiteUrl;
+    }
+
+    public void setMeasure(BigCorpApplicationMeasureProperties measure) {
+        this.measure = measure;
     }
 }

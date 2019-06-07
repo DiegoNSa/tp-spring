@@ -28,7 +28,7 @@ public class BigcorpApplication {
 		SiteService siteServiceA = context.getBean(SiteService.class);
 		logger.info(siteServiceA.findById("siteA").toString());
 		SiteService siteServiceB = context.getBean(SiteService.class);
-		logger.info("" + siteServiceB.findById("siteA").toString());
+		logger.info("" + siteServiceB.findById("site1").toString());
 	}
 
 }
