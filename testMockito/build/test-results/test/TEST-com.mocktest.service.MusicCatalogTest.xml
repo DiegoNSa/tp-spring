@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.mocktest.service.MusicCatalogTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2019-06-07T12:35:44" hostname="DESKTOP-B188NFD" time="0.58">
+  <properties/>
+  <testcase name="searchAlbumWhenAllNull" classname="com.mocktest.service.MusicCatalogTest" time="0.548"/>
+  <testcase name="searchAlbumTest" classname="com.mocktest.service.MusicCatalogTest" time="0.027"/>
+  <testcase name="searchAlbumWhenNameNull" classname="com.mocktest.service.MusicCatalogTest" time="0.0"/>
+  <testcase name="searchAlbumWhenArtistNull" classname="com.mocktest.service.MusicCatalogTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

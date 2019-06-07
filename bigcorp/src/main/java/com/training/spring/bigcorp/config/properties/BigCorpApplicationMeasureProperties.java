@@ -5,7 +5,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConfigurationProperties(prefix = "bigcorp")
+//@ConfigurationProperties(prefix = "bigcorp")
 public class BigCorpApplicationMeasureProperties{
     private Integer defaultFixed;
     private Integer defaultSimulated;
