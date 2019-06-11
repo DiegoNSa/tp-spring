@@ -27,8 +27,6 @@ public class FixedMeasureService implements MeasureService{
 
     public List<Measure> readMeasures(Captor captor, Instant start, Instant end,
                                       MeasureStep step) {
-        System.out.println("========================================================================");
-        System.out.println(bigCorpApplicationProperties.getMeasure());
         defaultValue = bigCorpApplicationProperties.getMeasure().getDefaultFixed();
         checkReadMeasuresAgrs(captor, start, end, step);
         List<Measure> measures = new ArrayList<>();

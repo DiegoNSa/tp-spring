@@ -1,18 +1,40 @@
 package com.training.spring.bigcorp.model;
 
+import javax.persistence.*;
 import java.util.Objects;
 import java.util.UUID;
 
+@Entity
 public class Captor {
     /**
      * Captor id
      */
+    @Id
     private String id = UUID.randomUUID().toString();
+
 
     /**
      * Captor name
      */
+    @Column(nullable = false)
     private String name;
+
+    @ManyToOne
+    private Site site;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PowerSource powerSource;
+
+    private Integer defaultPowerInWatt;
+
+    public Integer getDefaultPowerInWatt() {
+        return defaultPowerInWatt;
+    }
+
+    public void setDefaultPowerInWatt(Integer defaultPowerInWatt) {
+        this.defaultPowerInWatt = defaultPowerInWatt;
+    }
 
     public Site getSite() {
         return site;
@@ -22,7 +44,6 @@ public class Captor {
         this.site = site;
     }
 
-    private Site site;
 
     @Deprecated
     public Captor() {
@@ -55,6 +76,15 @@ public class Captor {
         this.name = name;
     }
 
+
+    public PowerSource getPowerSource() {
+        return powerSource;
+    }
+
+    public void setPowerSource(PowerSource powerSource) {
+        this.powerSource = powerSource;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -76,4 +106,5 @@ public class Captor {
                 ", name='" + name + '\'' +
                 '}';
     }
+
 }
