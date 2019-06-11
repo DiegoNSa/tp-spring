@@ -5,13 +5,17 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-public class Captor {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+public abstract class  Captor {
     /**
      * Captor id
      */
     @Id
     private String id = UUID.randomUUID().toString();
 
+
+    @Version
+    private int version;
 
     /**
      * Captor name
@@ -21,20 +25,6 @@ public class Captor {
 
     @ManyToOne
     private Site site;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private PowerSource powerSource;
-
-    private Integer defaultPowerInWatt;
-
-    public Integer getDefaultPowerInWatt() {
-        return defaultPowerInWatt;
-    }
-
-    public void setDefaultPowerInWatt(Integer defaultPowerInWatt) {
-        this.defaultPowerInWatt = defaultPowerInWatt;
-    }
 
     public Site getSite() {
         return site;
@@ -60,6 +50,14 @@ public class Captor {
         this.site = site;
     }
 
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
     public String getId() {
         return id;
     }
@@ -74,15 +72,6 @@ public class Captor {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-
-    public PowerSource getPowerSource() {
-        return powerSource;
-    }
-
-    public void setPowerSource(PowerSource powerSource) {
-        this.powerSource = powerSource;
     }
 
     @Override

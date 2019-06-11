@@ -1,6 +1,7 @@
 package com.training.spring.bigcorp.service;
 
 import com.training.spring.bigcorp.model.Captor;
+import com.training.spring.bigcorp.model.RealCaptor;
 import com.training.spring.bigcorp.model.Site;
 import com.training.spring.bigcorp.repository.CaptorDao;
 import org.assertj.core.api.Assertions;
@@ -60,7 +61,7 @@ public class CaptorServiceImplTest {
         // Initialisation
         String siteId = "siteId";
 
-        Captor testCaptor = new Captor("Capteur A",new Site("Florange"));
+        Captor testCaptor = new RealCaptor("Capteur A",new Site("Florange"));
         List<Captor> testList = new ArrayList<Captor>();
         testList.add(testCaptor);
 

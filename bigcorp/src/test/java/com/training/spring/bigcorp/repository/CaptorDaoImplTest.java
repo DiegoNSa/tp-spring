@@ -1,9 +1,6 @@
 package com.training.spring.bigcorp.repository;
 
-import com.training.spring.bigcorp.model.Captor;
-import com.training.spring.bigcorp.model.Measure;
-import com.training.spring.bigcorp.model.PowerSource;
-import com.training.spring.bigcorp.model.Site;
+import com.training.spring.bigcorp.model.*;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.groups.Tuple;
 import org.junit.Before;
@@ -15,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -46,12 +44,11 @@ public class CaptorDaoImplTest {
 
     @Test
     public void findById() {
-        Captor captor = captorDao.findById("c1").get();
+        FixedCaptor captor = (FixedCaptor)captorDao.findById("c1").get();
         Assertions.assertThat(captor.getId()).isEqualTo("c1");
         Assertions.assertThat(captor.getName()).isEqualTo("Eolienne");
         Assertions.assertThat(captor.getSite().getId()).isEqualTo("site1");
-        Assertions.assertThat(captor.getPowerSource()).isEqualTo(PowerSource.SIMULATED);
-        Assertions.assertThat(captor.getDefaultPowerInWatt()).isNull();
+        Assertions.assertThat(captor.getDefaultPowerInWatt()).isEqualTo(1000000);
     }
 
     @Test
@@ -70,12 +67,13 @@ public class CaptorDaoImplTest {
         ExampleMatcher matcher = ExampleMatcher.matching()
                 .withMatcher("name", matcher1 -> matcher1.ignoreCase().contains())
                 .withIgnorePaths("id")
+                .withIgnorePaths("defaultPowerInWatt")
                 .withIgnoreNullValues();
 
         Site site = new Site();
         site.setId("site1");
 
-        Captor captor = new Captor("lienne",site);
+        Captor captor = new FixedCaptor("lienne",site);
         List<Captor> captors = captorDao.findAll(Example.of(captor, matcher));
         Assertions.assertThat(captors)
                 .hasSize(1)
@@ -89,9 +87,8 @@ public class CaptorDaoImplTest {
         newSite.setId("site2");
         siteDao.save(newSite);
 
-        Captor captor = new Captor("Voiture", newSite);
+        Captor captor = new FixedCaptor("Voiture", newSite);
         captor.setId("c3");
-        captor.setPowerSource(PowerSource.FIXED);
         Assertions.assertThat(captorDao.findAll()).hasSize(2);
         captorDao.save(captor);
         Assertions.assertThat(captorDao.findAll()).hasSize(3)
@@ -130,5 +127,29 @@ public class CaptorDaoImplTest {
                 })
                 .isExactlyInstanceOf(PersistenceException.class)
                 .hasCauseExactlyInstanceOf(ConstraintViolationException.class);
+    }
+
+    @Test
+    public void preventConcurrentWrite() {
+        Captor captor = captorDao.getOne("c1");
+
+        // A la base le numéro de version est à sa valeur initiale
+        Assertions.assertThat(captor.getVersion()).isEqualTo(0);
+
+        // On detache cet objet du contexte de persistence
+        entityManager.detach(captor);
+        captor.setName("Captor updated");
+
+        // On force la mise à jour en base (via le flush) et on vérifie que l'obje retourné
+        // et attaché à la session a été mis à jour
+        Captor attachedCaptor = captorDao.save(captor);
+        entityManager.flush();
+        Assertions.assertThat(attachedCaptor.getName()).isEqualTo("Captor updated");
+        Assertions.assertThat(attachedCaptor.getVersion()).isEqualTo(1);
+
+        // Si maintenant je réessaie d'enregistrer captor, comme le numéro de version est
+        // à 0 je dois avoir une exception
+        Assertions.assertThatThrownBy(() -> captorDao.save(captor))
+                .isExactlyInstanceOf(ObjectOptimisticLockingFailureException.class);
     }
 }

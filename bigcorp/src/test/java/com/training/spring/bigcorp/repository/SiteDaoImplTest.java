@@ -16,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
@@ -98,5 +99,28 @@ public class SiteDaoImplTest {
                 })
                 .isExactlyInstanceOf(PersistenceException.class)
                 .hasCauseExactlyInstanceOf(ConstraintViolationException.class);
+    }
+
+    public void preventConcurrentWrite() {
+        Site site = siteDao.getOne("site1");
+
+        // A la base le numéro de version est à sa valeur initiale
+        Assertions.assertThat(site.getVersion()).isEqualTo(0);
+
+        // On detache cet objet du contexte de persistence
+        entityManager.detach(site);
+        site.setName("Updated Site");
+
+        // On force la mise à jour en base (via le flush) et on vérifie que l'obje retourné
+        // et attaché à la session a été mis à jour
+        Site attachedSite = siteDao.save(site);
+        siteDao.flush();
+        Assertions.assertThat(attachedSite.getName()).isEqualTo("Updated Site");
+        Assertions.assertThat(attachedSite.getVersion()).isEqualTo(1);
+
+        // Si maintenant je réessaie d'enregistrer captor, comme le numéro de version est
+        // à 0 je dois avoir une exception
+        Assertions.assertThatThrownBy(() -> siteDao.save(site))
+                .isExactlyInstanceOf(ObjectOptimisticLockingFailureException.class);
     }
 }

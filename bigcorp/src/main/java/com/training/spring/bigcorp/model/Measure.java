@@ -15,6 +15,9 @@ public class Measure {
     @Column(nullable = false)
     private Integer valueInWatt;
 
+    @Version
+    private int version;
+
 
     @OneToOne
     private Captor captor;
@@ -27,6 +30,14 @@ public class Measure {
         this.instant = instant;
         this.valueInWatt = valueInWatt;
         this.captor = captor;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     public Long getId() {

@@ -13,6 +13,9 @@ public class Site {
     @Id
     private String id = UUID.randomUUID().toString();
 
+    @Version
+    private int version;
+
     /**
      * Site name
      */
@@ -36,6 +39,14 @@ public class Site {
      */
     public Site(String name) {
         this.name = name;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     public String getId() {
