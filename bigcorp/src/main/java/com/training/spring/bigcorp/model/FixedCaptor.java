@@ -1,12 +1,13 @@
 package com.training.spring.bigcorp.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @DiscriminatorValue("FIXED")
 public class FixedCaptor extends Captor{
 
-    @Column()
+    @NotNull
     private Long defaultPowerInWatt;
 
     @Deprecated

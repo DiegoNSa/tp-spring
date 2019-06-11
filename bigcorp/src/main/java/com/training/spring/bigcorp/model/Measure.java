@@ -1,5 +1,7 @@
 package com.training.spring.bigcorp.model;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 import java.time.Instant;
 
 @Entity
@@ -9,10 +11,11 @@ public class Measure {
     @GeneratedValue
     private Long id;
 
-    @Column(nullable = false)
+    @NotNull
+    @Past
     private Instant instant;
 
-    @Column(nullable = false)
+    @NotNull
     private Integer valueInWatt;
 
     @Version
