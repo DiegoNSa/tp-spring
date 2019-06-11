@@ -18,6 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
@@ -29,7 +30,7 @@ public class MeasureDaoImplTest {
     private MeasureDao measureDao;
     @Test
     public void findById() {
-        Measure measure = measureDao.findById(-1L);
+        Measure measure = measureDao.findById(-1L).get();
         Assertions.assertThat(measure.getId()).isEqualTo(-1L);
         Assertions.assertThat(measure.getInstant()).isEqualTo(Instant.parse("2018-08-09T11:00:00.000Z"));
         Assertions.assertThat(measure.getValueInWatt()).isEqualTo(1_000_000);
@@ -38,8 +39,8 @@ public class MeasureDaoImplTest {
     }
     @Test
     public void findByIdShouldReturnNullWhenIdUnknown() {
-        Measure measure = measureDao.findById(-1000L);
-        Assertions.assertThat(measure).isNull();
+        Optional<Measure> measure = measureDao.findById(-1000L);
+        Assertions.assertThat(measure.isPresent()).isFalse();
     }
     @Test
     public void findAll() {
@@ -51,22 +52,22 @@ public class MeasureDaoImplTest {
         Captor captor = new Captor("Eolienne", new Site("site"));
         captor.setId("c1");
         Assertions.assertThat(measureDao.findAll()).hasSize(10);
-        measureDao.persist(new Measure(Instant.now(), 2_333_666, captor));
+        measureDao.save(new Measure(Instant.now(), 2_333_666, captor));
         Assertions.assertThat(measureDao.findAll()).hasSize(11);
     }
     @Test
     public void update() {
-        Measure measure = measureDao.findById(-1L);
+        Measure measure = measureDao.findById(-1L).get();
         Assertions.assertThat(measure.getValueInWatt()).isEqualTo(1_000_000);
         measure.setValueInWatt(2_333_666);
-        measureDao.persist(measure);
-        measure = measureDao.findById(-1L);
+        measureDao.save(measure);
+        measure = measureDao.findById(-1L).get();
         Assertions.assertThat(measure.getValueInWatt()).isEqualTo(2_333_666);
     }
     @Test
     public void deleteById() {
         Assertions.assertThat(measureDao.findAll()).hasSize(10);
-        measureDao.delete(measureDao.findById(-1L));
+        measureDao.delete(measureDao.findById(-1L).get());
         Assertions.assertThat(measureDao.findAll()).hasSize(9);
     }
 }

@@ -24,6 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
@@ -39,14 +40,14 @@ public class SiteDaoImplTest {
 
     @Test
     public void findById() {
-        Site site = siteDao.findById("site1");
+        Site site = siteDao.findById("site1").get();
         Assertions.assertThat(site.getId()).isEqualTo("site1");
         Assertions.assertThat(site.getName()).isEqualTo("Bigcorp Lyon");
     }
     @Test
     public void findByIdShouldReturnNullWhenIdUnknown() {
-        Site site = siteDao.findById("unknown");
-        Assertions.assertThat(site).isNull();
+        Optional<Site> site = siteDao.findById("unknown");
+        Assertions.assertThat(site.isPresent()).isFalse();
     }
     @Test
     public void findAll() {
@@ -61,7 +62,7 @@ public class SiteDaoImplTest {
         Site site = new Site("Site");
         site.setId("site2");
         Assertions.assertThat(siteDao.findAll()).hasSize(1);
-        siteDao.persist(site);
+        siteDao.save(site);
         Assertions.assertThat(siteDao.findAll()).hasSize(2)
                 .extracting("id", "name")
                 .contains(Tuple.tuple("site1", "Bigcorp Lyon"))
@@ -70,26 +71,26 @@ public class SiteDaoImplTest {
 
     @Test
     public void update() {
-        Site site = siteDao.findById("site1");
+        Site site = siteDao.findById("site1").get();
         Assertions.assertThat(site.getName()).isEqualTo("Bigcorp Lyon");
         site.setName("Site updated");
-        siteDao.persist(site);
-        site = siteDao.findById("site1");
+        siteDao.save(site);
+        site = siteDao.findById("site1").get();
         Assertions.assertThat(site.getName()).isEqualTo("Site updated");
     }
     @Test
     public void deleteById() {
         Site site = new Site("Site");
         site.setId("site2");
-        siteDao.persist(site);
+        siteDao.save(site);
         Assertions.assertThat(siteDao.findAll()).hasSize(2);
-        siteDao.delete(siteDao.findById("site2"));
+        siteDao.delete(siteDao.findById("site2").get());
         Assertions.assertThat(siteDao.findAll()).hasSize(1);
     }
 
     @Test
     public void deleteByIdShouldThrowExceptionWhenIdIsUsedAsForeignKey() {
-        Site site = siteDao.findById("site1");
+        Site site = siteDao.findById("site1").get();
         Assertions
                 .assertThatThrownBy(() -> {
                     siteDao.delete(site);

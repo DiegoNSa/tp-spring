@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -21,6 +23,7 @@ import javax.persistence.PersistenceException;
 import org.hibernate.exception.ConstraintViolationException;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -43,7 +46,7 @@ public class CaptorDaoImplTest {
 
     @Test
     public void findById() {
-        Captor captor = captorDao.findById("c1");
+        Captor captor = captorDao.findById("c1").get();
         Assertions.assertThat(captor.getId()).isEqualTo("c1");
         Assertions.assertThat(captor.getName()).isEqualTo("Eolienne");
         Assertions.assertThat(captor.getSite().getId()).isEqualTo("site1");
@@ -53,8 +56,8 @@ public class CaptorDaoImplTest {
 
     @Test
     public void findByIdShouldReturnNullWhenIdUnknown() {
-        Captor captor = captorDao.findById("c3");
-        Assertions.assertThat(captor).isNull();
+        Optional<Captor> captor = captorDao.findById("c3");
+        Assertions.assertThat(captor.isPresent()).isEqualTo(false);
     }
     @Test
     public void findAll() {
@@ -63,16 +66,34 @@ public class CaptorDaoImplTest {
     }
 
     @Test
+    public void findByExample() {
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withMatcher("name", matcher1 -> matcher1.ignoreCase().contains())
+                .withIgnorePaths("id")
+                .withIgnoreNullValues();
+
+        Site site = new Site();
+        site.setId("site1");
+
+        Captor captor = new Captor("lienne",site);
+        List<Captor> captors = captorDao.findAll(Example.of(captor, matcher));
+        Assertions.assertThat(captors)
+                .hasSize(1)
+                .extracting("id", "name")
+                .containsExactly(Tuple.tuple("c1", "Eolienne"));
+    }
+
+    @Test
     public void create() {
         Site newSite = new Site("site");
         newSite.setId("site2");
-        siteDao.persist(newSite);
+        siteDao.save(newSite);
 
         Captor captor = new Captor("Voiture", newSite);
         captor.setId("c3");
         captor.setPowerSource(PowerSource.FIXED);
         Assertions.assertThat(captorDao.findAll()).hasSize(2);
-        captorDao.persist(captor);
+        captorDao.save(captor);
         Assertions.assertThat(captorDao.findAll()).hasSize(3)
                 .extracting(Captor::getName)
                 .contains("Eolienne", "Laminoire à chaud", "Voiture");
@@ -80,11 +101,11 @@ public class CaptorDaoImplTest {
 
     @Test
     public void update() {
-        Captor captor = captorDao.findById("c1");
+        Captor captor = captorDao.findById("c1").get();
         Assertions.assertThat(captor.getName()).isEqualTo("Eolienne");
         captor.setName("Voiture");
-        captorDao.persist(captor);
-        captor = captorDao.findById("c1");
+        captorDao.save(captor);
+        captor = captorDao.findById("c1").get();
         Assertions.assertThat(captor.getName()).isEqualTo("Voiture");
     }
     @Test
@@ -95,13 +116,13 @@ public class CaptorDaoImplTest {
                 measureDao.delete(m);
             }
         });
-        captorDao.delete(captorDao.findById("c1"));
+        captorDao.delete(captorDao.findById("c1").get());
         Assertions.assertThat(captorDao.findAll()).hasSize(1);
     }
 
     @Test
     public void deleteByIdShouldThrowExceptionWhenIdIsUsedAsForeignKey() {
-        Captor captor = captorDao.findById("c1");
+        Captor captor = captorDao.findById("c1").get();
         Assertions
                 .assertThatThrownBy(() -> {
                     captorDao.delete(captor);
