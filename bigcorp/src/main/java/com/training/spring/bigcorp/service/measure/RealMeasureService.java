@@ -4,6 +4,7 @@ import com.training.spring.bigcorp.config.properties.BigCorpApplicationPropertie
 import com.training.spring.bigcorp.model.Captor;
 import com.training.spring.bigcorp.model.Measure;
 import com.training.spring.bigcorp.model.MeasureStep;
+import com.training.spring.bigcorp.model.RealCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class RealMeasureService implements MeasureService{
+public class RealMeasureService implements MeasureService<RealCaptor> {
 
     private Integer defaultValue;
 
@@ -24,7 +25,7 @@ public class RealMeasureService implements MeasureService{
     }
 
 
-    public List<Measure> readMeasures(Captor captor, Instant start, Instant end,
+    public List<Measure> readMeasures(RealCaptor captor, Instant start, Instant end,
                                       MeasureStep step) {
         defaultValue = bigCorpApplicationProperties.getMeasure().getDefaultReal();
         checkReadMeasuresAgrs(captor, start, end, step);

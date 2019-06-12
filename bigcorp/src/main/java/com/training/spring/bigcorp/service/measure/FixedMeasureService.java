@@ -2,6 +2,7 @@ package com.training.spring.bigcorp.service.measure;
 
 import com.training.spring.bigcorp.config.properties.BigCorpApplicationProperties;
 import com.training.spring.bigcorp.model.Captor;
+import com.training.spring.bigcorp.model.FixedCaptor;
 import com.training.spring.bigcorp.model.Measure;
 import com.training.spring.bigcorp.model.MeasureStep;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Service
 @Primary
-public class FixedMeasureService implements MeasureService{
+public class FixedMeasureService implements MeasureService<FixedCaptor> {
 
     private Integer defaultValue;
 
@@ -25,7 +26,7 @@ public class FixedMeasureService implements MeasureService{
         this.bigCorpApplicationProperties = bigCorpApplicationProperties;
     }
 
-    public List<Measure> readMeasures(Captor captor, Instant start, Instant end,
+    public List<Measure> readMeasures(FixedCaptor captor, Instant start, Instant end,
                                       MeasureStep step) {
         defaultValue = bigCorpApplicationProperties.getMeasure().getDefaultFixed();
         checkReadMeasuresAgrs(captor, start, end, step);
