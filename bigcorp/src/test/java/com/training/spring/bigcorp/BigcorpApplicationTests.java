@@ -1,5 +1,7 @@
 package com.training.spring.bigcorp;
 
+import org.assertj.core.api.Assertions;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -12,6 +14,7 @@ public class BigcorpApplicationTests {
 
 	@Test
 	public void contextLoads() {
+		Assertions.assertThat(true).isTrue();
 	}
 
 }

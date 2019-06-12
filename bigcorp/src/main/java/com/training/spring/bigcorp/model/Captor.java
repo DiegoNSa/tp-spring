@@ -13,8 +13,16 @@ public abstract class  Captor {
      * Captor id
      */
     @Id
-    private String id = UUID.randomUUID().toString();
+    private String id;
 
+    @PrePersist
+    public void generateId() {
+        this.id = UUID.randomUUID().toString();
+    }
+
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private PowerSource powerSource;
 
     @Version
     private int version;
@@ -47,10 +55,19 @@ public abstract class  Captor {
      * Constructor to use with required property
      * @param name
      */
-    public Captor(String name, Site site)
+    public Captor(String name, Site site, PowerSource powerSource)
     {
         this.name = name;
         this.site = site;
+        this.powerSource = powerSource;
+    }
+
+    public PowerSource getPowerSource() {
+        return powerSource;
+    }
+
+    public void setPowerSource(PowerSource powerSource) {
+        this.powerSource = powerSource;
     }
 
     public int getVersion() {

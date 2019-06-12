@@ -84,11 +84,9 @@ public class CaptorDaoImplTest {
     @Test
     public void createReal() {
         Site newSite = new Site("site");
-        newSite.setId("site2");
         siteDao.save(newSite);
 
         Captor captor = new RealCaptor("Voiture", newSite);
-        captor.setId("c3");
         Assertions.assertThat(captorDao.findAll()).hasSize(2);
         captorDao.save(captor);
         Assertions.assertThat(captorDao.findAll()).hasSize(3)
@@ -99,11 +97,9 @@ public class CaptorDaoImplTest {
     @Test
     public void createFixed() {
         Site newSite = new Site("site");
-        newSite.setId("site2");
         siteDao.save(newSite);
 
         Captor captor = new FixedCaptor("Voiture", newSite, new Long(10000));
-        captor.setId("c3");
         Assertions.assertThat(captorDao.findAll()).hasSize(2);
         captorDao.save(captor);
         Assertions.assertThat(captorDao.findAll()).hasSize(3)
@@ -115,11 +111,9 @@ public class CaptorDaoImplTest {
     @Test
     public void createSimulated() {
         Site newSite = new Site("site");
-        newSite.setId("site2");
         siteDao.save(newSite);
 
         Captor captor = new SimulatedCaptor("Voiture", newSite,new Long(200),new Long(1000000));
-        captor.setId("c3");
         Assertions.assertThat(captorDao.findAll()).hasSize(2);
         captorDao.save(captor);
         Assertions.assertThat(captorDao.findAll()).hasSize(3)
@@ -130,11 +124,9 @@ public class CaptorDaoImplTest {
     @Test
     public void createWithNulldName() {
         Site newSite = new Site("site");
-        newSite.setId("site2");
         siteDao.save(newSite);
 
         Captor captor = new RealCaptor(null, newSite);
-        captor.setId("c3");
         Assertions
                 .assertThatThrownBy(() -> {
                     captorDao.save(captor);
@@ -147,11 +139,9 @@ public class CaptorDaoImplTest {
     @Test
     public void createWithInvalidName() {
         Site newSite = new Site("site");
-        newSite.setId("site2");
         siteDao.save(newSite);
 
         Captor captor = new RealCaptor("V", newSite);
-        captor.setId("c3");
         Assertions
                 .assertThatThrownBy(() -> {
                     captorDao.save(captor);
@@ -165,11 +155,9 @@ public class CaptorDaoImplTest {
     @Test
     public void createSimulatedWithMinSupMax() {
         Site newSite = new Site("site");
-        newSite.setId("site2");
         siteDao.save(newSite);
 
         Captor captor = new SimulatedCaptor("Voiture", newSite,new Long(200000),new Long(100));
-        captor.setId("c3");
         Assertions
                 .assertThatThrownBy(() -> {
                     captorDao.save(captor);

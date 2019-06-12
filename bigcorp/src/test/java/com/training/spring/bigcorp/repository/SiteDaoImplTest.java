@@ -36,6 +36,13 @@ public class SiteDaoImplTest {
     private SiteDao siteDao;
 
     @Autowired
+    private CaptorDao captorDao;
+
+    @Autowired
+    private MeasureDao measureDao;
+
+
+    @Autowired
     private EntityManager entityManager;
 
 
@@ -61,13 +68,12 @@ public class SiteDaoImplTest {
     @Test
     public void create() {
         Site site = new Site("Site");
-        site.setId("site2");
         Assertions.assertThat(siteDao.findAll()).hasSize(1);
         siteDao.save(site);
         Assertions.assertThat(siteDao.findAll()).hasSize(2)
-                .extracting("id", "name")
-                .contains(Tuple.tuple("site1", "Bigcorp Lyon"))
-                .contains(Tuple.tuple("site2", "Site"));
+                .extracting("name")
+                .contains("Bigcorp Lyon")
+                .contains("Site");
     }
 
     @Test
@@ -82,10 +88,9 @@ public class SiteDaoImplTest {
     @Test
     public void deleteById() {
         Site site = new Site("Site");
-        site.setId("site2");
         siteDao.save(site);
         Assertions.assertThat(siteDao.findAll()).hasSize(2);
-        siteDao.delete(siteDao.findById("site2").get());
+        siteDao.delete(siteDao.findById(site.getId()).get());
         Assertions.assertThat(siteDao.findAll()).hasSize(1);
     }
 
@@ -143,5 +148,14 @@ public class SiteDaoImplTest {
                 })
                 .isExactlyInstanceOf(javax.validation.ConstraintViolationException.class)
                 .hasMessageContaining("la taille doit être comprise entre 3 et 100");
+    }
+
+    @Test
+    public void deleteBySiteId() {
+        Assertions.assertThat(captorDao.findBySiteId("site1")).hasSize(2);
+        measureDao.deleteAll();
+        captorDao.deleteBySiteId("site1");
+        siteDao.delete(siteDao.findById("site1").get());
+        Assertions.assertThat(captorDao.findBySiteId("site1")).isEmpty();
     }
 }
