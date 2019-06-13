@@ -77,6 +77,13 @@ public class MeasureDaoImplTest {
     }
 
     @Test
+    public void findMeasureByIntervalAndCaptor() {
+
+        List<Measure> measures = measureDao.findMeasureByIntervalAndCaptor(Instant.parse("2018-08-09T11:01:30.000Z"),Instant.parse("2018-08-09T11:03:30.000Z"),"c1");
+        Assertions.assertThat(measures).hasSize(2);
+    }
+
+    @Test
     public void preventConcurrentWrite() {
         Measure measure = measureDao.getOne(-1L);
 
@@ -99,6 +106,17 @@ public class MeasureDaoImplTest {
         Assertions.assertThatThrownBy(() -> measureDao.save(measure))
                 .isExactlyInstanceOf(ObjectOptimisticLockingFailureException.class);
     }
+
+    @Test
+    public void findTopByCaptorIdOrderByInstantDesc() {
+        Measure lastMeasure = measureDao.findTopByCaptorIdOrderByInstantDesc("c1");
+        Assertions.assertThat(lastMeasure.getId()).isEqualTo(-5L);
+        Assertions.assertThat(lastMeasure.getInstant()).isEqualTo(Instant.parse("2018-08-09T11:04:00.000Z"));
+        Assertions.assertThat(lastMeasure.getValueInWatt()).isEqualTo(1_009_678);
+        Assertions.assertThat(lastMeasure.getCaptor().getName()).isEqualTo("Eolienne");
+        Assertions.assertThat(lastMeasure.getCaptor().getSite().getName()).isEqualTo("Bigcorp Lyon");
+    }
+
 
     @Test
     public void deleteByCaptorId() {

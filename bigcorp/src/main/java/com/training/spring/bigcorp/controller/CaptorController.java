@@ -1,5 +1,6 @@
 package com.training.spring.bigcorp.controller;
 
+import com.training.spring.bigcorp.config.SecurityConfig;
 import com.training.spring.bigcorp.controller.dto.CaptorDto;
 import com.training.spring.bigcorp.exception.NotFoundException;
 import com.training.spring.bigcorp.model.*;
@@ -8,6 +9,7 @@ import com.training.spring.bigcorp.repository.MeasureDao;
 import com.training.spring.bigcorp.repository.SiteDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -79,6 +81,7 @@ public class CaptorController {
         return new ModelAndView("captor").addObject("captor", toDto(captor));
     }
 
+    @Secured(SecurityConfig.ROLE_ADMIN)
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ModelAndView save(@PathVariable String siteId,CaptorDto captorDto){
         Site site = siteDao.findById(siteId).orElseThrow(NotFoundException::new);
@@ -87,6 +90,7 @@ public class CaptorController {
         return new ModelAndView("site").addObject("site", site);
     }
 
+    @Secured(SecurityConfig.ROLE_ADMIN)
     @PostMapping(path = "/{id}/delete")
     public ModelAndView delete(@PathVariable String id,@PathVariable String siteId){
         measureDao.deleteByCaptorId(id);
