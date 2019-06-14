@@ -12,7 +12,6 @@ public class Measure {
     private Long id;
 
     @NotNull
-    @Past
     private Instant instant;
 
     @NotNull
